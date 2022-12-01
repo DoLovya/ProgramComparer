@@ -4,8 +4,10 @@ import sys, os
 import subprocess
 from FileManage import FileToIntList
 from FileManage import FileToStrList
-from DebugMessage import debugError
-from DebugMessage import debugSuccess
+from DebugMessage import DebugError
+from DebugMessage import DebugSuccess
+from DebugMessage import DebugHint
+from DataManage import InsertData
 
 IN_FILE: str = "in.txt"
 CPP_OUT_FILE: str = "cpp_out.txt"
@@ -34,7 +36,7 @@ def GetPythonRedirectCmd(file_path: str) -> str:
 
 def JudgeFileAndHint(file_path: str):
     if os.path.exists(file_path) == False:
-        debugError("文件%s不存在！" % file_path)
+        DebugError("文件%s不存在！" % file_path)
 
 
 def ExecutePowshellCmd(cmd: str) -> str:
@@ -54,27 +56,33 @@ def FindTheDiffInIntList(in_list: list[str], list1: list[int],
 
 
 def ProgramComparer(random_path: str, cpp_path: str, python_path: str):
-    debugSuccess(ExecutePowshellCmd(GetRandomRedirectCmd(random_path)))
-    debugSuccess(ExecutePowshellCmd(GetCppRedirectCmd(cpp_path)))
-    debugSuccess(ExecutePowshellCmd(GetPythonRedirectCmd(python_path)))
+    DebugSuccess(ExecutePowshellCmd(GetRandomRedirectCmd(random_path)))
+    DebugSuccess(ExecutePowshellCmd(GetCppRedirectCmd(cpp_path)))
+    DebugSuccess(ExecutePowshellCmd(GetPythonRedirectCmd(python_path)))
 
     in_list: list[str] = FileToStrList(IN_FILE)
-    debugSuccess("已将输入文件读入")
+    DebugSuccess("已将输入文件读入")
 
     cpp_out_list: list[int] = FileToIntList(CPP_OUT_FILE)
     py_out_list: list[int] = FileToIntList(PY_OUT_FILE)
 
     if len(cpp_out_list) != len(py_out_list):
-        debugError("输出文件个数不同！")
-    debugSuccess("已将输出文件读入")
+        DebugError("输出文件个数不同！")
+    DebugSuccess("已将输出文件读入")
 
     diff_list = FindTheDiffInIntList(in_list, cpp_out_list, py_out_list)
-    print(diff_list)
+
+    if len(diff_list):
+        DebugHint("找到%d条不同的数据" % (len(diff_list)))
+
+    InsertData(diff_list)
+
+    DebugSuccess("不同数据已存入数据库")
 
 
 def main(argv):
     if len(argv) != 4:
-        debugError("参数个数错误！")
+        DebugError("参数个数错误！")
 
     random_path: str = argv[1]
     cpp_path: str = argv[2]
