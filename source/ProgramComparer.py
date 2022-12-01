@@ -4,9 +4,9 @@ import sys, os
 import subprocess
 from FileManage import FileToIntList
 from FileManage import FileToStrList
-from DebugMessage import DebugError
-from DebugMessage import DebugSuccess
-from DebugMessage import DebugHint
+from DebugManage import DebugError
+from DebugManage import DebugSuccess
+from DebugManage import DebugHint
 from DataManage import InsertData
 
 IN_FILE: str = "in.txt"
