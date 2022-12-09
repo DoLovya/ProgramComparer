@@ -1,4 +1,5 @@
 import sqlite3
+from DebugManage import DebugWarning
 
 DIFF_DATA_DB: str = "diff.db"
 
@@ -18,11 +19,14 @@ def OpenDB():
 
 def InsertData(data: list[tuple[str, str, str]]):
     con, cur = OpenDB()
-    for random_in, cpp_out, py_out in data:
+    for random_line, cpp_line, py_line in data:
         insert_sql = "INSERT INTO DiffData VALUES(\"{}\", \"{}\", \"{}\")"
-        insert_sql = insert_sql.format(random_in, cpp_out, py_out)
-        print(insert_sql)
-        cur.execute(insert_sql)
+        insert_sql = insert_sql.format(random_line, cpp_line, py_line)
+        try:
+            con.execute(insert_sql)
+        except sqlite3.IntegrityError as e:
+            # DebugWarning(e)
+            pass
 
     con.commit()
     con.close()
