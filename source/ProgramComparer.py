@@ -44,8 +44,8 @@ def ExecutePowshellCmd(cmd: str) -> str:
     return cmd
 
 
-def FindTheDiffInIntList(in_list: list[str], list1: list[int],
-                         list2: list[int]) -> list[tuple[str, str, str]]:
+def FindTheDiffInIntList(in_list: list[str], list1: list[str],
+                         list2: list[str]) -> list[tuple[str, str, str]]:
     list_len: int = len(list1)
     ret_list: list[tuple[str, str, str]] = []
     for i in range(0, list_len):
@@ -61,23 +61,21 @@ def ProgramComparer(random_path: str, cpp_path: str, python_path: str):
     DebugSuccess(ExecutePowshellCmd(GetPythonRedirectCmd(python_path)))
 
     in_list: list[str] = FileToStrList(IN_FILE)
-    DebugSuccess("已将输入文件读入")
 
-    cpp_out_list: list[int] = FileToIntList(CPP_OUT_FILE)
-    py_out_list: list[int] = FileToIntList(PY_OUT_FILE)
+    cpp_out_list: list[str] = FileToStrList(CPP_OUT_FILE)
+    py_out_list: list[str] = FileToStrList(PY_OUT_FILE)
 
     if len(cpp_out_list) != len(py_out_list):
         DebugError("输出文件个数不同！")
-    DebugSuccess("已将输出文件读入")
 
     diff_list = FindTheDiffInIntList(in_list, cpp_out_list, py_out_list)
 
     if len(diff_list):
+        InsertData(diff_list)
         DebugHint("找到%d条不同的数据" % (len(diff_list)))
-
-    InsertData(diff_list)
-
-    DebugSuccess("不同数据已存入数据库")
+        DebugHint("不同数据已存入数据库")
+    else:
+        DebugSuccess("未找到异数据")
 
 
 def main(argv):
